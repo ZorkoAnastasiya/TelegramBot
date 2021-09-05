@@ -33,10 +33,7 @@ class Chat(Type):
     username: str = Field("")
 
 
-BaseModelType = Type
-
-
-def update_forward_refs(klass: BaseModelType) -> BaseModelType:
+def update_forward_refs(klass):
     klass.update_forward_refs()
     return klass
 
