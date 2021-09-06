@@ -68,7 +68,7 @@ class SendMessageRequest(Request):
     disable_notification: bool = Field(False)
     parse_mode: Optional[str] = Field(None)
     reply_to_message_id: Optional[int] = Field(None)
-    text: str = Field(...)
+    text: Optional[str] = Field(...)
 
 
 class GetMeResponse(Response):

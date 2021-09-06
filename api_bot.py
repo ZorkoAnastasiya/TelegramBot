@@ -60,7 +60,7 @@ async def _(
             TgBot.SendMessageRequest(
                 chat_id=update.message.chat.id,
                 reply_to_message_id=update.message.message_id,
-                text=update.message
+                text=update.message.text
             )
         )
         print(f"app.post: send_message: update.message - {update.message}")
