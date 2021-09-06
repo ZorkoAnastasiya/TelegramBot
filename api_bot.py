@@ -2,7 +2,7 @@
 import traceback
 import httpx
 import TgBot
-
+import util
 from config import settings
 from fastapi import FastAPI, Header, Body
 from typing import Optional
@@ -20,7 +20,7 @@ async def _(client: httpx.AsyncClient = TgBot.Telegram):
 @app.get("/tg/webhook")
 async def _(client: httpx.AsyncClient = TgBot.Telegram):
     whi = await TgBot.get_webhook_info(client)
-    TgBot.hide_webhook_secret(whi)
+    util.hide_webhook_secret(whi)
     return whi
 
 
@@ -32,11 +32,13 @@ async def _(
         x_secret_key: Optional[str] = Header(None),
 
 ):
-    TgBot.authorize(authorization, x_secret_key)
+    util.authorize(authorization, x_secret_key)
+
     whi.url = f"{whi.url}{settings.webhook_path}"
     webhook_set = await TgBot.set_webhook(client, whi)
+
     whi = await TgBot.get_webhook_info(client)
-    TgBot.hide_webhook_secret(whi)
+    util.hide_webhook_secret(whi)
 
     return {
         "ok": webhook_set,
@@ -49,14 +51,19 @@ async def _(
         client: httpx.AsyncClient = TgBot.Telegram,
         update: TgBot.Update = Body(...)
 ):
+    print(f"app.post: update.json - {update.json()}")
+    print(f"app.post: update.dict - {update.dict()}")
+    # noinspection PyBroadException
     try:
         await TgBot.send_message(
             client,
             TgBot.SendMessageRequest(
                 chat_id=update.message.chat.id,
-                reply_to_message=update.message.message_id,
-                text=update.json()
+                reply_to_message_id=update.message.message_id,
+                text=update.message
             )
         )
+        print(f"app.post: send_message: update.message - {update.message}")
+        print(f"app.post: send_message: update.json - {update.json()}")
     except Exception:
         traceback.print_exc()

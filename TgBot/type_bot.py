@@ -1,6 +1,7 @@
 # coding=utf-8
 from pydantic import BaseModel, Field
 from typing import Optional, Any, Union
+from util import update_forward_refs
 
 
 class Type(BaseModel):
@@ -33,11 +34,6 @@ class Chat(Type):
     username: str = Field("")
 
 
-def update_forward_refs(klass):
-    klass.update_forward_refs()
-    return klass
-
-
 @update_forward_refs
 class Message(Type):
     chat: Chat = Field(...)
@@ -61,10 +57,10 @@ class Update(Type):
 
 
 class WebhookInfo(Type):
-    url: str
-    pending_update_count: int = 0
-    last_error_date: int = 0
-    last_error_message: str = ''
+    url: str = Field(...)
+    pending_update_count: int = Field(0)
+    last_error_date: int = Field(0)
+    last_error_message: str = Field("")
 
 
 class SendMessageRequest(Request):
