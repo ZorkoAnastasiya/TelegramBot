@@ -11,6 +11,11 @@ from typing import Optional
 app = FastAPI()
 
 
+@app.get("/")
+async def _():
+    return "Telegram Bot"
+
+
 @app.get("/tg/about")
 async def _(client: httpx.AsyncClient = TgBot.Telegram):
     user = await TgBot.get_me(client)
@@ -51,8 +56,6 @@ async def _(
         client: httpx.AsyncClient = TgBot.Telegram,
         update: TgBot.Update = Body(...)
 ):
-    print(f"app.post: update.json - {update.json()}")
-    print(f"app.post: update.dict - {update.dict()}")
     # noinspection PyBroadException
     try:
         await TgBot.send_message(
@@ -60,7 +63,7 @@ async def _(
             TgBot.SendMessageRequest(
                 chat_id=update.message.chat.id,
                 reply_to_message_id=update.message.message_id,
-                text=update.message.text
+                text="bla-bla-bla"
             )
         )
         print(f"app.post: send_message: update.message - {update.message}")
