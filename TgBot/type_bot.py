@@ -42,7 +42,7 @@ class Message(Type):
     from_: Optional[User] = Field(None)
     message_id: int = Field(...)
     reply_to_message: Optional["Message"] = None
-    text: str = Field("")
+    text: Optional[str] = Field("")
 
     class Config:
         fields = {
