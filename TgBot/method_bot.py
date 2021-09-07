@@ -23,9 +23,11 @@ async def api_call(
         data: Optional[Type] = None
 ) -> Response:
     rr_type = rr_type_map[method_name]
-    payload = data.dict(exclude_unset = True) if data is not None else None,
+    payload = data.json(exclude_unset=True) if data is not None else None,
     print(f"api_call: payload - {payload}")
     response: httpx.Response = await client.post(f"/{method_name}", json=payload)
+    print(f"api_call - resp.text - {response.text}")
+    print(f"api_call - resp.content - {response.content}")
     raw_response = response.json()
     print(f"api_call: raw_response - {raw_response}")
     result = rr_type.parse_obj(raw_response)
@@ -59,5 +61,4 @@ async def send_message(
     print(f"send_message: request - {request}")
     response = await api_call(client, "sendMessage", data=request)
     print(f"send_message: response.result - {response.result}")
-    print(f"send_message: response.dict - {response.json()}")
     return response.result
