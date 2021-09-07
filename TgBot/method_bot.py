@@ -23,7 +23,7 @@ async def api_call(
         data: Optional[Type] = None
 ) -> Response:
     rr_type = rr_type_map[method_name]
-    payload = data if data is not None else None,
+    payload = data.dict(exclude_unset=True) if data is not None else None,
     print(f"api_call: payload - {payload}")
     response: httpx.Response = await client.post(f"/{method_name}", json=payload)
     raw_response = response.json()
