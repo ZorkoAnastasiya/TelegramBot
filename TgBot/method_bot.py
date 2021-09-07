@@ -26,7 +26,6 @@ async def api_call(
     payload = data.dict(exclude_unset = True) if data is not None else None,
     print(f"api_call: payload - {payload}")
     response: httpx.Response = await client.post(f"/{method_name}", json=payload)
-    print(f"api_call: response.url - {response.url}")
     raw_response = response.json()
     print(f"api_call: raw_response - {raw_response}")
     result = rr_type.parse_obj(raw_response)

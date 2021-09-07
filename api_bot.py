@@ -63,10 +63,8 @@ async def _(
             TgBot.SendMessageRequest(
                 chat_id=update.message.chat.id,
                 reply_to_message_id=update.message.message_id,
-                text="bla-bla-bla"
+                text=update.message.text
             )
         )
-        print(f"app.post: send_message: update.message - {update.message}")
-        print(f"app.post: send_message: update.json - {update.json()}")
     except Exception:
         traceback.print_exc()
