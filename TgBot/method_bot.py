@@ -1,4 +1,5 @@
 # coding=utf-8
+import json
 import httpx
 from config import settings
 from TgBot.type_bot import *
@@ -23,8 +24,14 @@ async def api_call(
         data: Optional[Type] = None
 ) -> Response:
     rr_type = rr_type_map[method_name]
-    payload = data.dict(exclude_unset=True) if data is not None else None,
+    payload = data.dict(exclude_unset=True) if data is not None else None
     print(f"api_call: payload - {payload}")
+    p = json.dumps(payload)
+    print(f"api_call: json.dumps - {p}")
+    pay = data.json(exclude_unset=True) if data is not None else None
+    print(f"api_call: pay - {pay}")
+    p2 = json.load(pay)
+    print(f"api_call: json.load - {p2}")
     response: httpx.Response = await client.post(f"/{method_name}", json=payload)
     raw_response = response.json()
     print(f"api_call: raw_response - {raw_response}")
