@@ -69,7 +69,7 @@ async def get_numbers(user: str, number: str):
         return response.json()
 
 
-def parser_text(update: Update = Body(...)):
+async def parser_text(update: Update = Body(...)):
     user = str(update.message.chat.id)
     text = update.message.text.lower()
     print(f"parser: user - {user}, text - {text}")
@@ -79,13 +79,14 @@ def parser_text(update: Update = Body(...)):
         print(f"parser - text - {text!r}")
         msg = json.dumps(text)
         print(f"parser - msg - {msg!r}")
-        number = get_numbers(user, msg)
+        number = await get_numbers(user, msg)
         return f"Сумма твоих чисел {number}!"
     elif text.isdigit():
         if int(text) > 4294967295:
             return "Слишком большое число!"
         else:
-            number = get_numbers(user, text)
+            number = await get_numbers(user, text)
+            print(f"parser - number - {number}")
             return f"Ок! Ты ввел число {int(text)}!"
     else:
         return "bla-bla-bla - непонимаю тебя!"
