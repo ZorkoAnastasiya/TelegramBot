@@ -1,4 +1,5 @@
 # coding=utf-8
+import json
 import httpx
 from fastapi import Body
 from config import settings
@@ -62,25 +63,29 @@ async def send_message(
 async def get_numbers(user: str, number: str):
     async with httpx.AsyncClient(base_url = "https://teach-python.herokuapp.com") as client:
         cookies = {"user": user}
-        response = await client.post("/task_numbers", cookies=cookies, data=number)
-        print(f"get_numbers: response.json - {response.json()}")
+        response = await client.post("/task_numbers", cookies=cookies, json=number)
+
+        print(f"get_numbers: response.json - {response.result}")
         return response.json()
 
 
-async def parser_text(update: Update = Body(...)):
+def parser_text(update: Update = Body(...)):
     user = str(update.message.chat.id)
     text = update.message.text.lower()
     print(f"parser: user - {user}, text - {text}")
     if text == "/start":
-        return "Давай начнем! Введи число!"
+        return "Давай начнем! Введи число! Или слово stop!"
     elif text == "stop":
-        number = await get_numbers(user, text)
+        print(f"parser - text - {text!r}")
+        msg = json.dumps(text)
+        print(f"parser - msg - {msg!r}")
+        number = get_numbers(user, msg)
         return f"Сумма твоих чисел {number}!"
     elif text.isdigit():
         if int(text) > 4294967295:
             return "Слишком большое число!"
         else:
-            number = await get_numbers(user, text)
-            return f"Ок! Ты ввел число {number}!"
+            number = get_numbers(user, text)
+            return f"Ок! Ты ввел число {int(text)}!"
     else:
         return "bla-bla-bla - непонимаю тебя!"
