@@ -59,12 +59,12 @@ async def send_message(
     return response.result
 
 
-async def get_numbers(user: str, text: str):
+async def get_numbers(user: str, number: str):
     async with httpx.AsyncClient(base_url = "https://teach-python.herokuapp.com") as client:
         cookies = {"user": user}
-        response = await client.post("/task_numbers", cookies=cookies, data=text)
+        response = await client.post("/task_numbers", cookies=cookies, data=number)
         print(f"get_numbers: response.json - {response.json()}")
-        return response.result
+        return response.json()
 
 
 async def parser_text(update: Update = Body(...)):
@@ -74,11 +74,13 @@ async def parser_text(update: Update = Body(...)):
     if text == "/start":
         return "Давай начнем! Введи число!"
     elif text == "stop":
-        return await get_numbers(user, text)
+        number = await get_numbers(user, text)
+        return f"Сумма твоих чисел {number}!"
     elif text.isdigit():
         if int(text) > 4294967295:
             return "Слишком большое число!"
         else:
-            return await get_numbers(user, text)
+            number = await get_numbers(user, text)
+            return f"Ок! Ты ввел число {number}!"
     else:
         return "bla-bla-bla - непонимаю тебя!"
