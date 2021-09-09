@@ -58,7 +58,7 @@ async def _(
 ):
     # noinspection PyBroadException
     try:
-        message = TgBot.parser_text(update)
+        message = await TgBot.parser_text(update)
         print(f"app.post: message - {message}")
         await TgBot.send_message(
             client,
