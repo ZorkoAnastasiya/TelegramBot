@@ -1,13 +1,8 @@
 # coding=utf-8
-import json
 import httpx
+from fastapi import Body
 from config import settings
 from TgBot.type_bot import *
-
-
-async def telegram_client() -> httpx.AsyncClient:
-    async with httpx.AsyncClient(base_url = settings.bot_url) as client:
-        yield client
 
 
 rr_type_map = {
@@ -16,6 +11,11 @@ rr_type_map = {
     "setWebhook": SetWebhookResponse,
     "sendMessage": SendMessageResponse
 }
+
+
+async def telegram_client() -> httpx.AsyncClient:
+    async with httpx.AsyncClient(base_url = settings.bot_url) as client:
+        yield client
 
 
 async def api_call(
@@ -56,5 +56,29 @@ async def send_message(
         request: SendMessageRequest
 ) -> Message:
     response = await api_call(client, "sendMessage", data=request)
-    print(f"send_message: response.result - {response.result}")
     return response.result
+
+
+async def get_numbers(user: str, text: str):
+    async with httpx.AsyncClient(base_url = "https://teach-python.herokuapp.com") as client:
+        cookies = {"user": user}
+        response = await client.post("/task_numbers", cookies=cookies, data=text)
+        print(f"get_numbers: response.json - {response.json()}")
+        return response.result
+
+
+async def parser_text(update: Update = Body(...)):
+    user = str(update.message.chat.id)
+    text = update.message.text.lower()
+    print(f"parser: user - {user}, text - {text}")
+    if text == "/start":
+        return "Давай начнем! Введи число!"
+    elif text == "stop":
+        return await get_numbers(user, text)
+    elif text.isdigit():
+        if int(text) > 4294967295:
+            return "Слишком большое число!"
+        else:
+            return await get_numbers(user, text)
+    else:
+        return "bla-bla-bla - непонимаю тебя!"

@@ -58,12 +58,14 @@ async def _(
 ):
     # noinspection PyBroadException
     try:
+        message = TgBot.parser_text(update)
+        print(f"app.post: message - {message}")
         await TgBot.send_message(
             client,
             TgBot.SendMessageRequest(
                 chat_id=update.message.chat.id,
                 reply_to_message_id=update.message.message_id,
-                text="bla-bla-bla"
+                text=message
             )
         )
     except Exception:
