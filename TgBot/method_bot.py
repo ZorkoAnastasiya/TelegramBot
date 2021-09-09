@@ -65,7 +65,7 @@ async def get_numbers(user: str, number: str):
         cookies = {"user": user}
         response = await client.post("/task_numbers", cookies=cookies, json=number)
 
-        print(f"get_numbers: response.json - {response.result}")
+        print(f"get_numbers: response.json - {response}")
         return response.json()
 
 
