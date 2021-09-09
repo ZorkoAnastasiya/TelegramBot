@@ -64,7 +64,6 @@ async def get_numbers(user: str, number: str):
     async with httpx.AsyncClient(base_url = "https://teach-python.herokuapp.com") as client:
         cookies = {"user": user}
         response = await client.post("/task_numbers", cookies=cookies, json=number)
-
         print(f"get_numbers: response.json - {response}")
         return response.json()
 
@@ -72,21 +71,19 @@ async def get_numbers(user: str, number: str):
 async def parser_text(update: Update = Body(...)):
     user = str(update.message.chat.id)
     text = update.message.text.lower()
-    print(f"parser: user - {user}, text - {text}")
     if text == "/start":
-        return "Давай начнем! Введи число! Или слово stop!"
+        return "Давай начнем! Введи число! Или слово stop для получения суммы!"
     elif text == "stop":
         print(f"parser - text - {text!r}")
         msg = json.dumps(text)
         print(f"parser - msg - {msg!r}")
-        number = await get_numbers(user, msg)
+        number = await get_numbers(user, text)
         return f"Сумма твоих чисел {number}!"
     elif text.isdigit():
         if int(text) > 4294967295:
             return "Слишком большое число!"
         else:
             number = await get_numbers(user, text)
-            print(f"parser - number - {number}")
-            return f"Ок! Ты ввел число {int(text)}!"
+            return f"Ок! Ты ввел число {number}!"
     else:
         return "bla-bla-bla - непонимаю тебя!"
