@@ -1,5 +1,4 @@
 # coding=utf-8
-import json
 import httpx
 from fastapi import Body
 from config import settings
@@ -24,6 +23,7 @@ async def api_call(
         method_name: str,
         data: Optional[Type] = None
 ) -> Response:
+
     rr_type = rr_type_map[method_name]
     payload = data.dict(exclude_unset=True) if data is not None else None
     response: httpx.Response = await client.post(f"/{method_name}", json=payload)
@@ -76,7 +76,7 @@ async def parser_text(update: Update = Body(...)):
         number = await get_numbers(user, text)
         return f"Сумма твоих чисел {number}!"
     elif text.isdigit():
-        if int(text) > 4294967295:
+        if int(text) > 10000000:
             return "Слишком большое число!"
         else:
             number = await get_numbers(user, text)
